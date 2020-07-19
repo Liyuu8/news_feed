@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 // style
-import 'package:news_feed/style/styles.dart';
+import 'package:news_feed/view/style/styles.dart';
 
 // screens
-import 'screens/home_screen.dart';
+import 'view/screens/home_screen.dart';
 
 void main() => runApp(MyApp());
 
