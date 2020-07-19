@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:news_feed/data/search_type.dart';
+import 'package:news_feed/view_models/news_list_view_model.dart';
+import 'package:provider/provider.dart';
 
 // data
 import 'package:news_feed/data/category_info.dart';
@@ -45,17 +48,32 @@ class NewsListPage extends StatelessWidget {
   }
 
   // TODO: 更新処理
-  onRefresh(BuildContext context) {
-    print('NewsListPage.onRefresh: clicked');
+  Future<void> onRefresh(BuildContext context) async {
+    final viewModel = context.read<NewsListViewModel>();
+    // TODO: 未完成
+    await viewModel.getNews(
+      searchType: viewModel.searchType,
+      keyword: viewModel.keyword,
+      category: viewModel.category,
+    );
   }
 
   // TODO: キーワード記事取得処理
-  getKeywordNews(BuildContext context, keyword) {
-    print('NewsListPage.getKeywordNews: (keyword: $keyword)');
+  Future<void> getKeywordNews(BuildContext context, keyword) async {
+    final viewModel = context.read<NewsListViewModel>();
+    await viewModel.getNews(
+      searchType: SearchType.KEYWORD,
+      keyword: keyword,
+      category: categories[0],
+    );
   }
 
   // TODO: カテゴリー記事取得処理
-  getCategoryNews(BuildContext context, Category category) {
-    print('NewsListPage.getCategoryNews: (category: ${category.nameJp})');
+  Future<void> getCategoryNews(BuildContext context, Category category) async {
+    final viewModel = context.read<NewsListViewModel>();
+    await viewModel.getNews(
+      searchType: SearchType.CATEGORY,
+      category: category,
+    );
   }
 }
