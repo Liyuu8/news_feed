@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
 // style
@@ -10,12 +11,15 @@ import 'package:news_feed/view_models/news_list_view_model.dart';
 // screens
 import 'view/screens/home_screen.dart';
 
-void main() => runApp(
-      ChangeNotifierProvider<NewsListViewModel>(
-        create: (context) => NewsListViewModel(),
-        child: MyApp(),
-      ),
-    );
+void main() async {
+  await DotEnv().load('.env');
+  runApp(
+    ChangeNotifierProvider<NewsListViewModel>(
+      create: (context) => NewsListViewModel(),
+      child: MyApp(),
+    ),
+  );
+}
 
 class MyApp extends StatelessWidget {
   @override

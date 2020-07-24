@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 // data
 import 'package:news_feed/data/category_info.dart';
 import 'package:news_feed/data/search_type.dart';
+import 'package:news_feed/models/model/news_model.dart';
 
 // repository
-import 'package:news_feed/repository/news_repository.dart';
+import 'package:news_feed/models/repository/news_repository.dart';
 
 class NewsListViewModel extends ChangeNotifier {
   final NewsRepository _repository = NewsRepository();
@@ -22,7 +23,9 @@ class NewsListViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  // TODO: ニュース取得処理
+  List<Article> _articles = [];
+  List<Article> get articles => _articles;
+
   Future<void> getNews({
     @required SearchType searchType,
     String keyword,
@@ -35,13 +38,24 @@ class NewsListViewModel extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    await _repository.getNews(
+    _articles = await _repository.getNews(
       searchType: _searchType,
       keyword: _keyword,
       category: _category,
     );
 
+    // TODO: delete
+    print(
+        'searchType: $_searchType, keyword: $_keyword, category: ${_category.nameJp}, '
+        'articleTitle: ${_articles[0].title}');
+
     _isLoading = true;
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _repository.dispose();
   }
 }
