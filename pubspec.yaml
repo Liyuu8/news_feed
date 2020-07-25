@@ -35,6 +35,7 @@ dependencies:
   json_annotation: ^3.0.1
   json_serializable: ^3.3.0
   flutter_dotenv: ^2.1.0
+  flutter_advanced_networkimage: ^0.7.0
 
 dev_dependencies:
   flutter_test:

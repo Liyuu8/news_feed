@@ -49,7 +49,7 @@ class NewsListViewModel extends ChangeNotifier {
         'searchType: $_searchType, keyword: $_keyword, category: ${_category.nameJp}, '
         'articleTitle: ${_articles[0].title}');
 
-    _isLoading = true;
+    _isLoading = false;
     notifyListeners();
   }
 
