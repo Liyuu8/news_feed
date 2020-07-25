@@ -38,8 +38,6 @@ class NewsRepository {
       }
 
       if (response.isSuccessful) {
-        // TODO: delete
-        print('responseBody: ${response.body}');
         result = News.fromJson(response.body).articles;
       } else {
         print('response is not successful. '

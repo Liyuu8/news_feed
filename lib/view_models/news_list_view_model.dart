@@ -44,11 +44,6 @@ class NewsListViewModel extends ChangeNotifier {
       category: _category,
     );
 
-    // TODO: delete
-    print(
-        'searchType: $_searchType, keyword: $_keyword, category: ${_category.nameJp}, '
-        'articleTitle: ${_articles[0].title}');
-
     _isLoading = false;
     notifyListeners();
   }
