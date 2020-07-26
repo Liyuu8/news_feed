@@ -12,8 +12,15 @@ import 'package:news_feed/view_models/news_list_view_model.dart';
 // screens
 import 'view/screens/home_screen.dart';
 
+// db
+import 'models/db/database.dart';
+
+MyDatabase myDatabase;
+
 void main() async {
   await DotEnv().load('.env');
+  myDatabase = MyDatabase();
+
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider<NewsListViewModel>(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:chopper/chopper.dart';
+import 'package:news_feed/main.dart';
 
 // data
 import 'package:news_feed/data/category_info.dart';
@@ -9,6 +10,9 @@ import 'package:news_feed/data/search_type.dart';
 // models
 import 'package:news_feed/models/model/news_model.dart';
 import 'package:news_feed/models/networking/api_service.dart';
+
+// util
+import 'package:news_feed/util/extensions.dart';
 
 class NewsRepository {
   final ApiService _apiService = ApiService.create();
@@ -38,7 +42,7 @@ class NewsRepository {
       }
 
       if (response.isSuccessful) {
-        result = News.fromJson(response.body).articles;
+        result = await insertAndReadFromDB(response.body);
       } else {
         print('response is not successful. '
             '(status code: ${response.statusCode} / ${response.error})');
@@ -52,5 +56,19 @@ class NewsRepository {
 
   void dispose() {
     _apiService.dispose();
+  }
+
+  // Webからの取得結果を一旦DBに一時格納（キャッシュ）するためのメソッド
+  Future<List<Article>> insertAndReadFromDB(responseBody) async {
+    final dao = myDatabase.newsDao;
+    final articles = News.fromJson(responseBody).articles;
+
+    // Webから取得した記事リストを（Dartのモデルクラス：Article）をDBのテーブルクラス（Articles）に
+    // 変換してDBに格納して、DBから格納結果を取得する
+    final articleRecodes =
+        await dao.insertAndReadNewsFromDB(articles.toArticleRecords(articles));
+
+    // DBから取得したデータをモデルクラスに再変換して返す
+    return articleRecodes.toArticles(articleRecodes);
   }
 }
