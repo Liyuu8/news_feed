@@ -45,15 +45,16 @@ class NewsListPage extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: <Widget>[
-                // TODO: 検索バー
+                // 検索バー
                 SearchBar(
                   onSearch: (keyword) => getKeywordNews(context, keyword),
                 ),
-                // TODO: カテゴリー選択チップ
+                // カテゴリー選択チップ
                 CategoryChips(
                   onCategorySelected: (category) =>
                       getCategoryNews(context, category),
                 ),
+                // ニュースリスト
                 Expanded(
                   child: Consumer<NewsListViewModel>(
                     builder: (context, model, child) => model.isLoading

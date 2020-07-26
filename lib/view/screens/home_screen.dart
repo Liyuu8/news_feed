@@ -24,7 +24,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return SafeArea(
       child: Scaffold(
         body: _pages[_currentIndex],
-        // TODO:
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentIndex,
           items: const [

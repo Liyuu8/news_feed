@@ -29,9 +29,7 @@ class HeadLinePage extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Consumer<HeadLineViewModel>(
             builder: (context, model, child) => model.isLoading
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
+                ? Center(child: CircularProgressIndicator())
                 : PageTransformer(
                     pageViewBuilder: (context, resolver) => PageView.builder(
                       controller: PageController(viewportFraction: 0.9),

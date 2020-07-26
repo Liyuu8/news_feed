@@ -24,9 +24,6 @@ class HeadLineViewModel extends ChangeNotifier {
 
     _articles = await _repository.getNews(searchType: SearchType.HEAD_LINE);
 
-    // TODO: delete
-    print('articleTitle: ${_articles[0].title}');
-
     _isLoading = false;
     notifyListeners();
   }
