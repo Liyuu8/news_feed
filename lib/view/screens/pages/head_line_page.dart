@@ -11,6 +11,9 @@ import 'package:news_feed/view/components/page_transformer.dart';
 // data
 import 'package:news_feed/view_models/head_line_view_model.dart';
 
+// screens
+import 'package:news_feed/view/screens/news_web_page_screen.dart';
+
 class HeadLinePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -51,14 +54,16 @@ class HeadLinePage extends StatelessWidget {
     );
   }
 
-  // TODO: 更新処理
   onRefresh(BuildContext context) async {
     final viewModel = context.read<HeadLineViewModel>();
     await viewModel.getHeadLines();
   }
 
-  // TODO: ウェブページ表示処理
   _openArticleWebPage(BuildContext context, Article article) {
-    print('HeadLinePage._openArticleWebPage: articleUrl is ${article.url}');
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => NewsWebPageScreen(article: article),
+      ),
+    );
   }
 }

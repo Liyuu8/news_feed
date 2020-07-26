@@ -16,6 +16,9 @@ import 'package:news_feed/view/components/article_tile.dart';
 import 'package:news_feed/view/components/category_chips.dart';
 import 'package:news_feed/view/components/search_bar.dart';
 
+// screens
+import 'package:news_feed/view/screens/news_web_page_screen.dart';
+
 class NewsListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -62,7 +65,7 @@ class NewsListPage extends StatelessWidget {
                             itemBuilder: (context, index) => ArticleTile(
                               article: model.articles[index],
                               onArticleClicked: (article) =>
-                                  _openArticleWebPage(article, context),
+                                  _openArticleWebPage(context, article),
                             ),
                           ),
                   ),
@@ -101,8 +104,11 @@ class NewsListPage extends StatelessWidget {
     );
   }
 
-  // TODO: 記事をウェブページにて表示する処理
-  _openArticleWebPage(Article article, BuildContext context) {
-    print('NewsListPage._openArticleWebPage: articleUrl is ${article.url}');
+  _openArticleWebPage(BuildContext context, Article article) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => NewsWebPageScreen(article: article),
+      ),
+    );
   }
 }

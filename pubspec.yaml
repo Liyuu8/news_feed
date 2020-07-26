@@ -36,6 +36,7 @@ dependencies:
   json_serializable: ^3.3.0
   flutter_dotenv: ^2.1.0
   flutter_advanced_networkimage: ^0.7.0
+  webview_flutter: ^0.3.22+1
 
 dev_dependencies:
   flutter_test:
