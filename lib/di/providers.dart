@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -33,21 +32,27 @@ List<SingleChildWidget> dependentModels = [
   ProxyProvider<MyDatabase, NewsDao>(
     update: (_, db, dao) => NewsDao(db),
   ),
-  ProxyProvider2<NewsDao, ApiService, NewsRepository>(
-    update: (_, dao, apiService, repository) =>
-        NewsRepository(dao: dao, apiService: apiService),
+  ChangeNotifierProvider<NewsRepository>(
+    create: (context) => NewsRepository(
+      dao: context.read<NewsDao>(),
+      apiService: context.read<ApiService>(),
+    ),
   ),
 ];
 
 List<SingleChildWidget> viewModels = [
-  ChangeNotifierProvider<HeadLineViewModel>(
-    create: (BuildContext context) => HeadLineViewModel(
+  ChangeNotifierProxyProvider<NewsRepository, HeadLineViewModel>(
+    create: (context) => HeadLineViewModel(
       repository: context.read<NewsRepository>(),
     ),
+    update: (_, repository, viewModel) =>
+        viewModel..onRepositoryUpdated(repository),
   ),
-  ChangeNotifierProvider<NewsListViewModel>(
-    create: (BuildContext context) => NewsListViewModel(
+  ChangeNotifierProxyProvider<NewsRepository, NewsListViewModel>(
+    create: (context) => NewsListViewModel(
       repository: context.read<NewsRepository>(),
     ),
+    update: (_, repository, viewModel) =>
+        viewModel..onRepositoryUpdated(repository),
   ),
 ];

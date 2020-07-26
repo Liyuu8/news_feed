@@ -9,6 +9,9 @@ import 'package:news_feed/view/components/head_line_item.dart';
 import 'package:news_feed/view/components/page_transformer.dart';
 
 // data
+import 'package:news_feed/data/load_status.dart';
+
+// view models
 import 'package:news_feed/view_models/head_line_view_model.dart';
 
 // screens
@@ -19,7 +22,8 @@ class HeadLinePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = Provider.of<HeadLineViewModel>(context, listen: false);
 
-    if (!viewModel.isLoading && viewModel.articles.isEmpty) {
+    if (viewModel.loadStatus != LoadStatus.LOADING &&
+        viewModel.articles.isEmpty) {
       // 非同期処理でエラーを回避。
       Future(() => viewModel.getHeadLines());
     }
@@ -28,7 +32,8 @@ class HeadLinePage extends StatelessWidget {
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Consumer<HeadLineViewModel>(
-            builder: (context, model, child) => model.isLoading
+            builder: (context, model, child) => model.loadStatus ==
+                    LoadStatus.LOADING
                 ? Center(child: CircularProgressIndicator())
                 : PageTransformer(
                     pageViewBuilder: (context, resolver) => PageView.builder(
@@ -46,13 +51,13 @@ class HeadLinePage extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.refresh),
-          onPressed: () => onRefresh(context),
+          onPressed: () => _onRefresh(context),
         ),
       ),
     );
   }
 
-  onRefresh(BuildContext context) async {
+  _onRefresh(BuildContext context) async {
     final viewModel = context.read<HeadLineViewModel>();
     await viewModel.getHeadLines();
   }

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
 // data
+import 'package:news_feed/data/load_status.dart';
 import 'package:news_feed/data/search_type.dart';
 
-// model
+// models
 import 'package:news_feed/models/model/news_model.dart';
-
-// repository
 import 'package:news_feed/models/repository/news_repository.dart';
 
 class HeadLineViewModel extends ChangeNotifier {
@@ -14,19 +13,20 @@ class HeadLineViewModel extends ChangeNotifier {
 
   HeadLineViewModel({repository}) : _repository = repository;
 
-  bool _isLoading = false;
-  bool get isLoading => _isLoading;
+  LoadStatus _loadStatus = LoadStatus.DONE;
+  LoadStatus get loadStatus => _loadStatus;
 
   List<Article> _articles = [];
   List<Article> get articles => _articles;
 
+  // repositoryの呼び出し
   Future<void> getHeadLines() async {
-    _isLoading = true;
-    notifyListeners();
+    await _repository.getNews(searchType: SearchType.HEAD_LINE);
+  }
 
-    _articles = await _repository.getNews(searchType: SearchType.HEAD_LINE);
-
-    _isLoading = false;
+  onRepositoryUpdated(NewsRepository repository) {
+    _articles = repository.articles;
+    _loadStatus = repository.loadStatus;
     notifyListeners();
   }
 

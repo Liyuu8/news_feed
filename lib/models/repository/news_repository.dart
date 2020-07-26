@@ -4,6 +4,7 @@ import 'package:chopper/chopper.dart';
 
 // data
 import 'package:news_feed/data/category_info.dart';
+import 'package:news_feed/data/load_status.dart';
 import 'package:news_feed/data/search_type.dart';
 
 // models
@@ -14,7 +15,7 @@ import 'package:news_feed/models/networking/api_service.dart';
 // util
 import 'package:news_feed/util/extensions.dart';
 
-class NewsRepository {
+class NewsRepository extends ChangeNotifier {
   final String _apiKey = DotEnv().env['api_key'];
   final ApiService _apiService;
   final NewsDao _dao;
@@ -23,14 +24,21 @@ class NewsRepository {
       : _apiService = apiService,
         _dao = dao;
 
-  Future<List<Article>> getNews({
+  List<Article> _articles = [];
+  List<Article> get articles => _articles;
+
+  LoadStatus _loadStatus = LoadStatus.DONE;
+  LoadStatus get loadStatus => _loadStatus;
+
+  Future<void> getNews({
     @required SearchType searchType,
     String keyword,
     Category category,
   }) async {
-    Response response;
-    List<Article> result = [];
+    _loadStatus = LoadStatus.LOADING;
+    notifyListeners();
 
+    Response response;
     try {
       switch (searchType) {
         case SearchType.HEAD_LINE:
@@ -47,32 +55,38 @@ class NewsRepository {
       }
 
       if (response.isSuccessful) {
-        result = await insertAndReadFromDB(response.body);
+        await _insertAndReadFromDB(response.body);
+        _loadStatus = LoadStatus.DONE;
       } else {
         print('response is not successful. '
             '(status code: ${response.statusCode} / ${response.error})');
+        _loadStatus = LoadStatus.RESPONSE_ERROR;
       }
     } on Exception catch (e) {
       print('exception happened. (error: $e)');
+      _loadStatus = LoadStatus.NETWORK_ERROR;
+    } finally {
+      notifyListeners();
     }
-
-    return result;
-  }
-
-  void dispose() {
-    _apiService.dispose();
   }
 
   // Webからの取得結果を一旦DBに一時格納（キャッシュ）するためのメソッド
-  Future<List<Article>> insertAndReadFromDB(responseBody) async {
-    final articles = News.fromJson(responseBody).articles;
+  Future<void> _insertAndReadFromDB(responseBody) async {
+    final articlesFromNetwork = News.fromJson(responseBody).articles;
 
     // Webから取得した記事リストを（Dartのモデルクラス：Article）をDBのテーブルクラス（Articles）に
     // 変換してDBに格納して、DBから格納結果を取得する
-    final articleRecodes =
-        await _dao.insertAndReadNewsFromDB(articles.toArticleRecords(articles));
+    final articlesFromDB = await _dao.insertAndReadNewsFromDB(
+      articlesFromNetwork.toArticleRecords(articlesFromNetwork),
+    );
 
-    // DBから取得したデータをモデルクラスに再変換して返す
-    return articleRecodes.toArticles(articleRecodes);
+    // DBから取得したデータをモデルクラスに再変換
+    _articles = articlesFromDB.toArticles(articlesFromDB);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _apiService.dispose();
   }
 }

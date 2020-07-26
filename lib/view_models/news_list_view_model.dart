@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 // data
 import 'package:news_feed/data/category_info.dart';
+import 'package:news_feed/data/load_status.dart';
 import 'package:news_feed/data/search_type.dart';
-import 'package:news_feed/models/model/news_model.dart';
 
-// repository
+// models
+import 'package:news_feed/models/model/news_model.dart';
 import 'package:news_feed/models/repository/news_repository.dart';
 
 class NewsListViewModel extends ChangeNotifier {
@@ -22,12 +23,13 @@ class NewsListViewModel extends ChangeNotifier {
   Category _category = categories[0];
   Category get category => _category;
 
-  bool _isLoading = false;
-  bool get isLoading => _isLoading;
+  LoadStatus _loadStatus = LoadStatus.DONE;
+  LoadStatus get loadStatus => _loadStatus;
 
   List<Article> _articles = [];
   List<Article> get articles => _articles;
 
+  // repositoryの呼び出し
   Future<void> getNews({
     @required SearchType searchType,
     String keyword,
@@ -37,16 +39,16 @@ class NewsListViewModel extends ChangeNotifier {
     _keyword = keyword;
     _category = category;
 
-    _isLoading = true;
-    notifyListeners();
-
-    _articles = await _repository.getNews(
+    await _repository.getNews(
       searchType: _searchType,
       keyword: _keyword,
       category: _category,
     );
+  }
 
-    _isLoading = false;
+  onRepositoryUpdated(NewsRepository repository) {
+    _articles = repository.articles;
+    _loadStatus = repository.loadStatus;
     notifyListeners();
   }
 
