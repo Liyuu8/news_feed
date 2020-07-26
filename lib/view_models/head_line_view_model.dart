@@ -10,7 +10,9 @@ import 'package:news_feed/models/model/news_model.dart';
 import 'package:news_feed/models/repository/news_repository.dart';
 
 class HeadLineViewModel extends ChangeNotifier {
-  final NewsRepository _repository = NewsRepository();
+  final NewsRepository _repository;
+
+  HeadLineViewModel({repository}) : _repository = repository;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;

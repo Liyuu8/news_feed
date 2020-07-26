@@ -5,33 +5,21 @@ import 'package:provider/provider.dart';
 // style
 import 'package:news_feed/view/style/styles.dart';
 
-// view_models
-import 'package:news_feed/view_models/head_line_view_model.dart';
-import 'package:news_feed/view_models/news_list_view_model.dart';
-
 // screens
 import 'view/screens/home_screen.dart';
 
-// db
-import 'models/db/database.dart';
-
-MyDatabase myDatabase;
+// di
+import 'di/providers.dart';
 
 void main() async {
   await DotEnv().load('.env');
-  myDatabase = MyDatabase();
 
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider<NewsListViewModel>(
-        create: (_) => NewsListViewModel(),
-      ),
-      ChangeNotifierProvider<HeadLineViewModel>(
-        create: (_) => HeadLineViewModel(),
-      ),
-    ],
-    child: MyApp(),
-  ));
+  runApp(
+    MultiProvider(
+      providers: globalProviders,
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
